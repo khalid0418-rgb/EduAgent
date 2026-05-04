@@ -12,7 +12,7 @@ except ImportError:
     st.error("Error: Could not find generator.py. Please ensure it is in the EduAgent folder.")
 
 # Page Configuration
-st.set_page_config(page_title="EduContent AI", page_icon="🎓")
+st.set_page_config(page_title="AI Marketing Strategist", page_icon="📈")
 
 # Sidebar for Global Settings (shared by both tabs)
 with st.sidebar:
@@ -26,7 +26,7 @@ with st.sidebar:
         options=["Academic", "Professional", "Casual", "Enthusiastic"]
     )
 
-st.title("🎓 EduContent AI Agent")
+st.title("📈 AI Marketing Strategist")
 
 # --- TAB SYSTEM START ---
 tab1, tab2, tab3 = st.tabs(["📝 Single Post", "📅 Weekly Calendar", "🎨 Image Generator"])
@@ -76,7 +76,7 @@ with tab2:
                 st.markdown("---")
                 st.write(full_content)
                 st.download_button("Download Calendar as Text", full_content)
-                
+
 with tab3:
     st.subheader("Create a matching visual")
     # A text box where you can paste the post text the AI just wrote for you.
