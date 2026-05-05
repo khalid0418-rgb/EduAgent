@@ -6,7 +6,6 @@ try:
     from generator import (
         generate_marketing_strategy, 
         generate_social_post, 
-        generate_weekly_calendar, 
         generate_full_calendar_content, 
         generate_image_for_post
     )
