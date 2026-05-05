@@ -13,6 +13,17 @@ except ImportError:
 
 # Page Configuration
 st.set_page_config(page_title="AI Marketing Strategist", page_icon="📈")
+st.sidebar.header("🏢 Business Intelligence Profile")
+biz_name = st.sidebar.text_input("Business Name")
+biz_niche = st.sidebar.text_input("Business Niche")
+target_audience = st.sidebar.text_input("Target Audience")
+
+biz_profile = {
+    "name": biz_name,
+    "niche": biz_niche,
+    "audience": target_audience
+}
+st.sidebar.divider()
 
 # Sidebar for Global Settings (shared by both tabs)
 with st.sidebar:
@@ -43,7 +54,7 @@ with tab1:
         if topic_single:
             with st.spinner(f'Writing your {platform} post...'):
                 try:
-                    result = generate_social_post(topic_single, platform, tone)
+                    result = generate_social_post(topic_single, platform, tone, biz_profile)
                     st.success("Post Generated!")
                     st.markdown("---")
                     st.write(result)
@@ -60,7 +71,7 @@ with tab2:
         if topic_week:
             with st.spinner("Creating strategy..."):
                 # Save the strategy to the "session state" so the next button can see it
-                st.session_state.current_strategy = generate_weekly_calendar(topic_week, tone)
+                st.session_state.current_strategy = generate_weekly_calendar(topic_week, tone, biz_profile)
                 st.success("Strategy Ready!")
                 st.info(st.session_state.current_strategy)
         else:

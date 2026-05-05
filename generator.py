@@ -5,7 +5,15 @@ from dotenv import load_dotenv
 # 1. Load your credentials
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
+def generate_marketing_strategy(goal, platform, tone, biz_profile):
+    prompt = f"""
+    You are a Senior AI Marketing Strategist for {biz_profile['name']}, a business in the {biz_profile['niche']} niche.
+    Your target audience is {biz_profile['audience']}.
+    
+    Create a 7-day marketing strategy for {platform} with the goal of {goal}. 
+    The tone should be {tone}.
+    """
+    # ... rest of your OpenAI call logic
 # 2. Your existing function for single posts
 def generate_social_post(topic, platform, tone):
     response = client.chat.completions.create(
