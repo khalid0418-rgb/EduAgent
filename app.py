@@ -1,16 +1,18 @@
 import streamlit as st
-import generator  # This tells app.py to look for generator.py in the same folder
 import os
-import sys
 
-# Ensures the app can find your generator.py file in the current folder
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
+# --- CLEAN IMPORT SECTION ---
 try:
-    # Notice we are now importing BOTH functions from your generator file
-    from generator import generate_social_post, generate_weekly_calendar, generate_full_calendar_content, generate_image_for_post
-except ImportError:
-    st.error("Error: Could not find generator.py. Please ensure it is in the EduAgent folder.")
+    from generator import (
+        generate_marketing_strategy, 
+        generate_social_post, 
+        generate_weekly_calendar, 
+        generate_full_calendar_content, 
+        generate_image_for_post
+    )
+except ImportError as e:
+    st.error(f"Import Error: {e}")
+    st.stop() # This stops the app here so we can read the error
 
 # Page Configuration
 st.set_page_config(page_title="AI Marketing Strategist", page_icon="📈")
