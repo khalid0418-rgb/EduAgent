@@ -1,4 +1,6 @@
 import streamlit as st
+import generator  # This tells app.py to look for generator.py in the same folder
+import streamlit as st
 import os
 import sys
 
