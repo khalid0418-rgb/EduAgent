@@ -5,42 +5,35 @@ from dotenv import load_dotenv
 # 1. Load your credentials
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# 1. Strategy Function (Updated)
 def generate_marketing_strategy(goal, platform, tone, biz_profile):
-    prompt = f"""
-    You are a Senior AI Marketing Strategist for {biz_profile['name']}, a business in the {biz_profile['niche']} niche.
-    Your target audience is {biz_profile['audience']}.
-    
-    Create a 7-day marketing strategy for {platform} with the goal of {goal}. 
-    The tone should be {tone}.
-    """
-    # ... rest of your OpenAI call logic
-# 2. Your existing function for single posts
-def generate_social_post(topic, platform, tone, biz_profile):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": f"You are an expert content creator. Write in a {tone} tone for {platform}."},
-            {"role": "user", "content": f"Create a post about: {topic}"}
+            {"role": "system", "content": f"You are a Senior Marketing Strategist for {biz_profile['name']} ({biz_profile['niche']})."},
+            {"role": "user", "content": f"Create a 7-day strategy for {platform} targeting {biz_profile['audience']}. Goal: {goal}. Tone: {tone}."}
         ]
     )
     return response.choices[0].message.content
 
-# 3. ADD THE NEW FUNCTION HERE
-def generate_weekly_calendar(topic, tone):
+# 2. Single Post Function (Fixed the 'topic' vs 'goal' mismatch)
+def generate_social_post(goal, platform, tone, biz_profile):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": f"You are a strategic content planner. Create a 7-day social media calendar (Monday-Sunday)."},
-            {"role": "user", "content": f"Topic: {topic}. Tone: {tone}. Provide a brief hook and a goal for each day."}
+            {"role": "system", "content": f"You are a content creator for {biz_profile['name']}. Target audience: {biz_profile['audience']}."},
+            {"role": "user", "content": f"Write a {platform} post to achieve the goal of: {goal}. Tone: {tone}."}
         ]
     )
     return response.choices[0].message.content
+
+# 3. Full Calendar Content (Updated)
 def generate_full_calendar_content(strategy, platform, tone, biz_profile):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": f"You are a master copywriter for {platform}. Write in a {tone} tone."},
-            {"role": "user", "content": f"Based on this strategy: {strategy}, write the full caption for all 7 days. Include relevant hashtags and emojis."}
+            {"role": "system", "content": f"You are a copywriter for {biz_profile['name']}. Writing for {platform} targeting {biz_profile['audience']}."},
+            {"role": "user", "content": f"Based on this strategy: {strategy}, write the full caption for all 7 days. Tone: {tone}."}
         ]
     )
     return response.choices[0].message.content
