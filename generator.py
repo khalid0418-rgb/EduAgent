@@ -15,7 +15,7 @@ def generate_marketing_strategy(goal, platform, tone, biz_profile):
     """
     # ... rest of your OpenAI call logic
 # 2. Your existing function for single posts
-def generate_social_post(topic, platform, tone):
+def generate_social_post(topic, platform, tone, biz_profile):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -35,7 +35,7 @@ def generate_weekly_calendar(topic, tone):
         ]
     )
     return response.choices[0].message.content
-def generate_full_calendar_content(strategy, platform, tone):
+def generate_full_calendar_content(strategy, platform, tone, biz_profile):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
