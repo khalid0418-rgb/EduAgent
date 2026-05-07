@@ -1,5 +1,17 @@
 import streamlit as st
 import os
+from supabase import create_client, Client
+
+@st.cache_resource
+def init_connection():
+    url = st.secrets["SUPABASE_URL"]
+    key = st.secrets["SUPABASE_KEY"]
+    return create_client(url, key)
+
+supabase = init_connection()
+import streamlit as st
+import os
+from supabase import create_client, Client
 
 # --- CLEAN IMPORT SECTION ---
 try:
@@ -13,31 +25,94 @@ except ImportError as e:
     st.error(f"Import Error: {e}")
     st.stop() # This stops the app here so we can read the error
 
+# Initialize Supabase connection
+@st.cache_resource
+def init_connection():
+    url = os.getenv("SUPABASE_URL")
+    key = os.getenv("SUPABASE_KEY")
+    return create_client(url, key)
+
+supabase = init_connection()
+
+# --- DATABASE FUNCTIONS (Insert Step 2 Here) ---
+def load_user_profile(email):
+    try:
+        response = supabase.table("profiles").select("*").eq("email", email).execute()
+        if response.data:
+            return response.data[0]
+        return None
+    except Exception as e:
+        st.error(f"Error loading profile: {e}")
+        return None
+    
+def save_user_profile(email, biz_data):
+    try:
+        # NOTICE: The keys here must match what is sent from the UI
+        supabase.table("profiles").upsert({
+            "email": email,
+            "biz_name": biz_data['biz_name'],
+            "biz_niche": biz_data['biz_niche'],
+            "target_audience": biz_data['target_audience']
+        }).execute()
+        st.success("Profile saved to cloud!")
+    except Exception as e:
+        st.error(f"Error saving profile: {e}")
+
 # Page Configuration
 st.set_page_config(page_title="AI Marketing Strategist", page_icon="📈")
-st.sidebar.header("🏢 Business Intelligence Profile")
-biz_name = st.sidebar.text_input("Business Name")
-biz_niche = st.sidebar.text_input("Business Niche")
-target_audience = st.sidebar.text_input("Target Audience")
 
+# --- SIDEBAR UI ---
+with st.sidebar:
+    st.header("🏢 Business Intelligence Profile")
+    
+    # 1. Email is the master key
+    user_email = st.text_input("Enter your email to load/save profile", key="user_email")
+
+    # 2. LOAD BUTTON
+    if st.button("🔍 Load My Profile"):
+        if user_email:
+            profile = load_user_profile(user_email)
+            if profile:
+                st.session_state['biz_name'] = profile.get('biz_name', '')
+                st.session_state['biz_niche'] = profile.get('biz_niche', '')
+                st.session_state['target_audience'] = profile.get('target_audience', '')
+                st.success("Profile Loaded!")
+            else:
+                st.warning("No profile found.")
+        else:
+            st.error("Please enter email first.")
+
+    st.divider()
+
+    # 3. Inputs (The ONLY place these should exist)
+    biz_name = st.text_input("Business Name", value=st.session_state.get('biz_name', ''), key="bn")
+    biz_niche = st.text_input("Niche", value=st.session_state.get('biz_niche', ''), key="bniche")
+    target_audience = st.text_input("Target Audience", value=st.session_state.get('target_audience', ''), key="ta")
+
+    # 4. SAVE BUTTON
+    if st.button("💾 Save Profile"):
+        if user_email and biz_name:
+            biz_data = {
+                "biz_name": biz_name,
+                "biz_niche": biz_niche,
+                "target_audience": target_audience
+            }
+            save_user_profile(user_email, biz_data)
+        else:
+            st.error("Email and Name required.")
+
+    st.divider()
+    
+    platform = st.selectbox("Target Platform", ("LinkedIn", "Twitter/X", "Instagram", "Facebook"))
+    tone = st.select_slider("Tone of Voice", options=["Academic", "Professional", "Casual", "Enthusiastic"])
+
+# --- PREPARE DATA FOR AI ---
+# We define this AFTER the sidebar logic so it has the latest data
 biz_profile = {
     "name": biz_name,
     "niche": biz_niche,
     "audience": target_audience
 }
-st.sidebar.divider()
-
-# Sidebar for Global Settings (shared by both tabs)
-with st.sidebar:
-    st.header("Settings")
-    platform = st.selectbox(
-        "Target Platform",
-        ("LinkedIn", "Twitter/X", "Instagram", "Facebook")
-    )
-    tone = st.select_slider(
-        "Tone of Voice",
-        options=["Academic", "Professional", "Casual", "Enthusiastic"]
-    )
 
 st.title("📈 AI Marketing Strategist")
 
