@@ -63,7 +63,7 @@ st.set_page_config(page_title="AI Marketing Strategist", page_icon="📈")
 
 # --- SIDEBAR UI ---
 with st.sidebar:
-    st.header("🏢 Business Intelligence Profile")
+    st.header("🏢 Business Profile")
     
     # 1. Email is the master key
     user_email = st.text_input("Enter your email to load/save profile", key="user_email")
