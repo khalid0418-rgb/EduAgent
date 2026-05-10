@@ -1,4 +1,7 @@
 import streamlit as st
+st.set_page_config(
+    initial_sidebar_state="expanded"
+)
 import os
 from supabase import create_client, Client
 
